@@ -1,24 +1,14 @@
 const express = require("express");
-const cors = require("cors");
-const app = express();
-const http = require("http");
-require("./connection");
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server, {
-  cors: "*",
-  methods: "*",
+
+const app = require("./app");
+require("./db/Database");
+const dotenv = require("dotenv");
+// config
+dotenv.config({
+  path: ".env",
 });
+// create server
 
-const User = require("./models/User");
-const userRoutes = require("./routes/userRoutes");
-app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(express.json());
-
-app.use("/users", userRoutes);
-
-server.listen(8082, () => {
-  console.log("Server listening on port", 8082);
+const server = app.listen(process.env.PORT, () => {
+  console.log(`Servier is listening on ${process.env.PORT}`);
 });
