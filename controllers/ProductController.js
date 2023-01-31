@@ -9,9 +9,32 @@ exports.createProduct = async (req, res, next) => {
     product,
   });
 };
-
-exports.getAllProducts = (req, res) => {
+// get all products
+exports.getAllProducts = async (req, res) => {
+  const products = await Product.find();
   res.status(200).json({
-    message: "Route is working",
+    success: true,
+    products,
+  });
+};
+
+// Update products -- Admin
+
+exports.updateProduct = async (req, res, next) => {
+  let product = await Product.findById(req.params.id);
+  if (!product) {
+    return res.status(500).json({
+      success: false,
+      message: "Product not found with this id",
+    });
+  }
+  product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+    useUnified: true,
+  });
+  res.status(200).json({
+    success: true,
+    product,
   });
 };
