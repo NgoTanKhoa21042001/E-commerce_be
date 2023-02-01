@@ -1,6 +1,6 @@
 const Product = require("../models/ProductModel");
 const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsynErrors = require("../middleware/catchAsynError");
+const catchAsynErrors = require("../middleware/catchAsynErrors");
 const Features = require("../utils/Features");
 /// create product
 
