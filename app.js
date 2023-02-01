@@ -6,7 +6,10 @@ app.use(express.json());
 // route import
 
 const product = require("./routes/ProductRoute");
+const user = require("./routes/UserRoute");
 
 app.use("/api/v2", product);
+app.use("/api/v2", user);
+
 app.use(ErrorHandler);
 module.exports = app;
