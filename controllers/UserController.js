@@ -1,7 +1,7 @@
 const User = require("../models/UserModel");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsynErrors = require("../middleware/catchAsynError");
-
+const sendToken = require("../utils/jwtToken");
 // Register
 exports.createUser = catchAsynErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -14,12 +14,7 @@ exports.createUser = catchAsynErrors(async (req, res, next) => {
       url: "https://test.com",
     },
   });
-  const token = user.getJwtToken();
-
-  res.status(200).json({
-    success: true,
-    token,
-  });
+  sendToken(user, 200, res);
 });
 
 // login user
@@ -45,9 +40,22 @@ exports.loginUser = catchAsynErrors(async (req, res, next) => {
       new ErrorHandler("User is not find with this email & password", 401)
     );
   }
-  const token = user.getJwtToken();
-  res.status(201).json({
+  // const token = user.getJwtToken();
+  // res.status(201).json({
+  //   success: true,
+  //   token,
+  // });
+  sendToken(user, 200, res);
+});
+
+// log out user
+exports.logoutUser = catchAsynErrors(async (req, res, next) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+  res.status(200).json({
     success: true,
-    token,
+    message: "Log out successfully",
   });
 });
