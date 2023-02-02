@@ -49,6 +49,9 @@ const userSchema = new mongoose.Schema({
 // Hash the password
 
 userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
   this.password = await bcrypt.hash(this.password, 10);
 });
 
@@ -64,6 +67,22 @@ userSchema.methods.getJwtToken = function () {
 // so sánh password
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Forgot password
+
+userSchema.methods.getResetToken = function () {
+  // Generating token
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  // hasing and adding resetPasswordToken
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.resetPasswordTime = Date.now() + 15 * 60 * 1000;
+
+  return resetToken;
 };
 
 module.exports = mongoose.model("User", userSchema);
